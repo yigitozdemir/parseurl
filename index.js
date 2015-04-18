@@ -9,23 +9,23 @@
  * Module dependencies.
  */
 
-var url = require('url')
-var parse = url.parse
-var Url = url.Url
+var url = require('url');
+var parse = url.parse;
+var Url = url.Url;
 
 /**
  * Pattern for a simple path case.
  * See: https://github.com/joyent/node/pull/7878
  */
 
-var simplePathRegExp = /^(\/\/?(?!\/)[^\?#\s]*)(\?[^#\s]*)?$/
+var simplePathRegExp = /^(\/\/?(?!\/)[^\?#\s]*)(\?[^#\s]*)?$/;
 
 /**
  * Exports.
  */
 
-module.exports = parseurl
-module.exports.original = originalurl
+module.exports = parseurl;
+module.exports.original = originalurl;
 
 /**
  * Parse the `req` url with memoization.
@@ -36,26 +36,28 @@ module.exports.original = originalurl
  */
 
 function parseurl(req) {
-  var url = req.url
+  var url = req.url;
 
   if (url === undefined) {
     // URL is undefined
-    return undefined
+    return undefined;
   }
 
-  var parsed = req._parsedUrl
+  var parsed = req._parsedUrl;
 
   if (fresh(url, parsed)) {
     // Return cached URL parse
-    return parsed
+    return parsed;
   }
 
   // Parse the URL
-  parsed = fastparse(url)
-  parsed._raw = url
+  parsed = fastparse(url);
+  parsed._raw = url;
 
-  return req._parsedUrl = parsed
-};
+  req._parsedUrl = parsed;
+
+  return req._parsedUrl;
+}
 
 /**
  * Parse the `req` original url with fallback and memoization.
@@ -66,26 +68,27 @@ function parseurl(req) {
  */
 
 function originalurl(req) {
-  var url = req.originalUrl
+  var url = req.originalUrl;
 
   if (typeof url !== 'string') {
     // Fallback
-    return parseurl(req)
+    return parseurl(req);
   }
 
-  var parsed = req._parsedOriginalUrl
+  var parsed = req._parsedOriginalUrl;
 
   if (fresh(url, parsed)) {
     // Return cached URL parse
-    return parsed
+    return parsed;
   }
 
   // Parse the URL
-  parsed = fastparse(url)
-  parsed._raw = url
+  parsed = fastparse(url);
+  parsed._raw = url;
 
-  return req._parsedOriginalUrl = parsed
-};
+  req._parsedOriginalUrl = parsed;
+  return req._parsedOriginalUrl;
+}
 
 /**
  * Parse the `str` url with fast-path short-cut.
@@ -98,25 +101,24 @@ function originalurl(req) {
 function fastparse(str) {
   // Try fast path regexp
   // See: https://github.com/joyent/node/pull/7878
-  var simplePath = typeof str === 'string' && simplePathRegExp.exec(str)
+  var simplePath = typeof str === 'string' && simplePathRegExp.exec(str);
 
   // Construct simple URL
   if (simplePath) {
-    var pathname = simplePath[1]
-    var search = simplePath[2] || null
-    var url = Url !== undefined
-      ? new Url()
-      : {}
-    url.path = str
-    url.href = str
-    url.pathname = pathname
-    url.search = search
-    url.query = search && search.substr(1)
+    var pathname = simplePath[1];
+    var search = simplePath[2] || null;
+    var url = Url !== undefined ? new Url() : {};
 
-    return url
+    url.path = str;
+    url.href = str;
+    url.pathname = pathname;
+    url.search = search;
+    url.query = search && search.substr(1);
+
+    return url;
   }
 
-  return parse(str)
+  return parse(str);
 }
 
 /**
@@ -132,5 +134,5 @@ function fresh(url, parsedUrl) {
   return typeof parsedUrl === 'object'
     && parsedUrl !== null
     && (Url === undefined || parsedUrl instanceof Url)
-    && parsedUrl._raw === url
+    && parsedUrl._raw === url;
 }
