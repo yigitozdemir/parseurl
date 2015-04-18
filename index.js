@@ -131,8 +131,5 @@ function fastparse(str) {
  */
 
 function fresh(url, parsedUrl) {
-  return typeof parsedUrl === 'object'
-    && parsedUrl !== null
-    && (Url === undefined || parsedUrl instanceof Url)
-    && parsedUrl._raw === url;
+  return typeof parsedUrl === 'object' && parsedUrl !== null && (Url === undefined || parsedUrl instanceof Url) && parsedUrl._raw === url;
 }
